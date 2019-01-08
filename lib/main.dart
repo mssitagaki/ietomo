@@ -43,7 +43,7 @@ class _MyList extends State<List> {
       body:Padding(
         padding:const EdgeInsets.all(8.0),
         child:StreamBuilder<QuerySnapshot>(
-          stream:Firestore.instance.collection('ie-memo').snapshots(),
+          stream:Firestore.instance.collection('users').document(firebaseUser.uid).collection("transaction").snapshots(),
           builder:(BuildContext context,AsyncSnapshot<QuerySnapshot>snapshot){
             if (!snapshot.hasData) return const Text('Loading...');
             return ListView.builder(
@@ -310,6 +310,7 @@ void _getUser(BuildContext context) async{
     Navigator.pushReplacementNamed(context, "/list");
   }catch(e){
     Fluttertoast.showToast(msg:"Firebaseとの接続に失敗しました。");
+    debugPrint(e.toString());
   }
 }
 
