@@ -149,7 +149,7 @@ class _MyInputFormState extends State<InputForm>{
   Widget build(BuildContext context){
 
     DocumentReference _mainReference;
-    _mainReference = Firestore.instance.collection('ie-memo').document();
+    _mainReference = Firestore.instance.collection('users').document(firebaseUser.uid).collection("transaction").document();
 
     bool deleteFlg = false;
 
@@ -160,8 +160,8 @@ class _MyInputFormState extends State<InputForm>{
         _data.stuff = widget.document['stuff'];
         _data.date = widget.document['date'];
       }
-      _mainReference = Firestore.instance.collection('ie-memo').
-                        document(widget.document.documentID);
+      _mainReference = Firestore.instance.collection('users').document(firebaseUser.uid)
+          .collection("transaction").document("widget.document.documentID");
       deleteFlg = true;
     }
 
