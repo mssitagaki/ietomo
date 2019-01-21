@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:ietomo/chat.dart';
 
 void main() => runApp(MyApp());
 
@@ -10,7 +11,7 @@ class MyApp extends StatelessWidget {
    @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '家メモ',
+      title: 'イエトモ',
       routes:<String, WidgetBuilder>{
         '/':(_) => Splash(),
         '/list':(_) => List(),
@@ -37,7 +38,20 @@ class _MyList extends State<List> {
               print("login");
               showBasicDialog(context);
             },
-          )
+          ),
+          IconButton(
+            icon:Icon(Icons.chat),
+            onPressed:(){
+              print("chat");
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    settings:const RouteSettings(name:"/new"),
+                    builder:(BuildContext context) => ChatPage(firebaseUser.uid)
+                ),
+              );
+            },
+          ),
         ]
       ),
       body:Padding(
@@ -309,7 +323,7 @@ void _getUser(BuildContext context) async{
     }
     Navigator.pushReplacementNamed(context, "/list");
   }catch(e){
-    Fluttertoast.showToast(msg:"Firebaseとの接続に失敗しました。");
+    Fluttertoast.showToast(msg:"Firebaseとの接続に失敗しました。" + e.toString());
     debugPrint(e.toString());
   }
 }
