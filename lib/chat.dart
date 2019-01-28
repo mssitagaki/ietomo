@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatPage extends StatefulWidget {
-  ChatPage(this._userName);
+  ChatPage(this._uid,this._userName);
 
+  final String _uid;
   final String _userName;
 
   @override
@@ -26,7 +27,7 @@ class _ChatPageState extends State<ChatPage> {
               Flexible(
                 child: StreamBuilder<QuerySnapshot>(
                   stream: Firestore.instance.collection('users')
-                      .document(widget._userName)
+                      .document(widget._uid)
                       .collection("chat_room")
                       .orderBy("created_at", descending: true)
                       .snapshots(),
@@ -121,7 +122,7 @@ class _ChatPageState extends State<ChatPage> {
   _handleSubmit(String message) {
     _controller.text = "";
     var db = Firestore.instance;
-    db.collection('users').document(widget._userName).collection("chat_room").add({
+    db.collection('users').document(widget._uid).collection("chat_room").add({
       "user_name": widget._userName,
       "message": message,
       "created_at": DateTime.now()

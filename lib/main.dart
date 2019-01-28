@@ -47,7 +47,7 @@ class _MyList extends State<List> {
                 context,
                 MaterialPageRoute(
                     settings:const RouteSettings(name:"/new"),
-                    builder:(BuildContext context) => ChatPage(firebaseUser.uid)
+                    builder:(BuildContext context) => ChatPage(firebaseUser.uid,firebaseUser.displayName)
                 ),
               );
             },
@@ -330,7 +330,7 @@ void _getUser(BuildContext context) async{
 
 void showBasicDialog(BuildContext context){
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  String email,password;
+  String email,password,name;
   if(firebaseUser.isAnonymous){
     showDialog(
       context:context,
@@ -372,7 +372,21 @@ void showBasicDialog(BuildContext context){
                         return 'Paswordは6桁以上です';
                       }
                     },
-                  ),
+                   ),
+                   TextFormField(
+                      decoration:const InputDecoration(
+                        icon:const Icon(Icons.person),
+                        labelText:"Name",
+                      ),
+                      onSaved:(String value){
+                        name =value;
+                      },
+                      validator:(value){
+                        if(value.isEmpty){
+                          return 'Nameは必須入力項目です';
+                        }
+                      },
+                    ),
                 ],
               ),
             ),
@@ -388,7 +402,7 @@ void showBasicDialog(BuildContext context){
                 onPressed:(){
                   if(_formKey.currentState.validate()){
                     _formKey.currentState.save();
-                    _createUser(context,email,password);
+                    _createUser(context,email,password,name);
                   }
                 }
               ),
@@ -440,9 +454,12 @@ void _signIn(BuildContext context,String email,String password)async{
   }
 }
 
-void _createUser(BuildContext context,String email,String password)async{
+void _createUser(BuildContext context,String email,String password,String name)async{
   try{
+    UserUpdateInfo info = new UserUpdateInfo();
+    info.displayName = name;
     await _auth.createUserWithEmailAndPassword(email:email,password:password);
+    await _auth.updateProfile(info);
     Navigator.pushNamedAndRemoveUntil(context,"/",(_)=>false);
   }catch(e){
     Fluttertoast.showToast(msg:"Firebaseのユーザー登録に失敗しました");
